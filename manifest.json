@@ -1,0 +1,10 @@
+{
+  "id": "nan-spotlight",
+  "name": "楠·聚焦搜索",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "macOS 聚焦搜索风格的搜索与文件管理插件（作者：@楠 / 版权：是小楠呐）",
+  "author": "@楠",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}

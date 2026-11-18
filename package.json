@@ -1,0 +1,30 @@
+{
+  "name": "nan-spotlight",
+  "version": "1.0.0",
+  "description": "macOS 聚焦搜索风格的搜索与文件管理插件（楠·聚焦搜索）",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production"
+  },
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "spotlight",
+    "search",
+    "file-manager"
+  ],
+  "author": "@楠",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "esbuild": "^0.20.0",
+    "obsidian": "^1.4.0",
+    "typescript": "^5.4.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

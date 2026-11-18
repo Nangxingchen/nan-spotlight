@@ -1,0 +1,506 @@
+/* ============================================================
+   楠·聚焦搜索 (nan-spotlight)
+   作者：@楠 / 版权：是小楠呐 / 开源协议：GNU GPL v3
+   ============================================================ */
+
+/* ---------- 遮罩层：平滑亚克力透明背景 ---------- */
+.nan-spotlight-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--layer-menu, 1000) - 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 9vh;
+  background: rgba(12, 14, 20, 0.26);
+  backdrop-filter: blur(var(--nan-blur, 24px)) saturate(170%) brightness(0.94);
+  -webkit-backdrop-filter: blur(var(--nan-blur, 24px)) saturate(170%) brightness(0.94);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.nan-spotlight-overlay.is-open {
+  opacity: 1;
+}
+
+/* ---------- 面板：从中间向上下展开/闭合 ---------- */
+.nan-spotlight-panel {
+  width: min(720px, 94vw);
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: color-mix(in srgb, var(--background-secondary, #2b2d3a) 76%, transparent);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), inset 0 0 0 0.5px rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  transform: scaleY(0.1) scaleX(0.88);
+  transform-origin: center center;
+  opacity: 0;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+
+.nan-spotlight-panel.is-open {
+  transform: scaleY(1) scaleX(1);
+  opacity: 1;
+}
+
+/* ---------- 搜索区域 ---------- */
+.nan-spotlight-search {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex: 0 0 auto;
+}
+
+.nan-spotlight-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+.nan-spotlight-search-icon {
+  display: flex;
+  color: var(--text-muted);
+}
+
+.nan-spotlight-search-icon .svg-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.nan-spotlight-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  color: var(--text-normal);
+  outline: none;
+  padding: 2px 0;
+}
+
+.nan-spotlight-input::placeholder {
+  color: var(--text-faint);
+}
+
+.nan-spotlight-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.nan-spotlight-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.nan-spotlight-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-normal);
+}
+
+.nan-spotlight-btn.is-active {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--text-normal);
+}
+
+.nan-spotlight-btn .svg-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* 搜索选项开关 */
+.nan-spotlight-options {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.nan-spotlight-opt {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.nan-spotlight-opt:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nan-spotlight-opt.is-active {
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--text-normal);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 搜索帮助 */
+.nan-spotlight-help {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nan-spotlight-help-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.nan-spotlight-help-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+/* 搜索结果 */
+.nan-spotlight-results {
+  margin-top: 10px;
+  max-height: 34vh;
+  overflow-y: auto;
+}
+
+.nan-spotlight-result-file {
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.nan-spotlight-result-file-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nan-spotlight-result-file-head:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nan-spotlight-result-file-name {
+  font-weight: 600;
+  color: var(--text-normal);
+  flex: 0 0 auto;
+}
+
+.nan-spotlight-result-file-path {
+  font-size: 11px;
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.nan-spotlight-result-line {
+  display: flex;
+  gap: 10px;
+  padding: 3px 10px;
+  cursor: pointer;
+  font-family: var(--font-monospace);
+  font-size: 12px;
+}
+
+.nan-spotlight-result-line:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nan-spotlight-result-linenum {
+  color: var(--text-faint);
+  min-width: 24px;
+  text-align: right;
+  user-select: none;
+  flex: 0 0 auto;
+}
+
+.nan-spotlight-result-text {
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.nan-spotlight-highlight {
+  background: rgba(255, 200, 60, 0.35);
+  color: var(--text-normal);
+  border-radius: 2px;
+}
+
+.nan-spotlight-empty,
+.nan-spotlight-loading {
+  padding: 14px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.nan-spotlight-result-no-line {
+  padding: 6px 10px 10px;
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+/* ---------- 文件管理区域 ---------- */
+.nan-spotlight-files {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.nan-spotlight-files-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nan-spotlight-crumb {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.nan-spotlight-crumb-item {
+  display: flex;
+  align-items: center;
+  padding: 3px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.nan-spotlight-crumb-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-normal);
+}
+
+.nan-spotlight-crumb-sep {
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+.nan-spotlight-crumb-root {
+  color: var(--text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.nan-spotlight-files-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.nan-spotlight-files-body-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* 列表视图 */
+.nan-spotlight-files-body {
+  display: block;
+}
+
+/* 小图标（网格）视图 */
+.nan-spotlight-files-body.nan-spotlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 6px;
+}
+
+.nan-spotlight-file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nan-spotlight-file-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.nan-spotlight-grid .nan-spotlight-file-item {
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 6px;
+  text-align: center;
+}
+
+.nan-spotlight-file-icon {
+  display: flex;
+  color: var(--text-muted);
+  flex: 0 0 auto;
+}
+
+.nan-spotlight-file-icon .svg-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.nan-spotlight-grid .nan-spotlight-file-icon .svg-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.nan-spotlight-file-name {
+  font-size: 13px;
+  color: var(--text-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nan-spotlight-grid .nan-spotlight-file-name {
+  font-size: 12px;
+  max-width: 100%;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* 行内重命名输入框 */
+.nan-spotlight-rename-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--text-normal);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--interactive-accent, #7c6af0);
+  border-radius: 4px;
+  padding: 2px 6px;
+  outline: none;
+}
+
+.nan-spotlight-grid .nan-spotlight-rename-input {
+  flex: 0 0 auto;
+  width: 100%;
+  font-size: 12px;
+}
+
+/* ---------- 选中高亮（单击确定点中） ---------- */
+.nan-spotlight-file-item.is-selected {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- 收藏夹界面 ---------- */
+.nan-spotlight-fav .nan-spotlight-panel {
+  width: min(560px, 92vw);
+}
+
+.nan-spotlight-fav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex: 0 0 auto;
+}
+
+.nan-spotlight-fav-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.nan-spotlight-fav-star {
+  display: flex;
+  color: #f5c518;
+}
+
+.nan-spotlight-fav-star .svg-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.nan-spotlight-fav-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.nan-spotlight-fav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nan-spotlight-fav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.nan-spotlight-fav-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nan-spotlight-fav-name {
+  font-size: 14px;
+  color: var(--text-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nan-spotlight-fav-path {
+  font-size: 11px;
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nan-spotlight-fav-toggle {
+  display: flex;
+  color: #f5c518;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.nan-spotlight-fav-toggle .svg-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- 关于 ---------- */
+.nan-spotlight-about p {
+  margin: 4px 0;
+  color: var(--text-muted);
+}
