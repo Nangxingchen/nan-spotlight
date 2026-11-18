@@ -1,6 +1,6 @@
 # 楠·聚焦搜索 (nan-spotlight)
 
-macOS 聚焦（Spotlight）风格的 Obsidian 插件：**既是全局搜索，又是文件管理器**。
+聚焦（Spotlight）风格的 Obsidian 插件：**既是全局搜索，又是文件管理器**。
 
 - 作者：@楠
 - 版权：是小楠呐
